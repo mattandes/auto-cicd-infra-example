@@ -1,0 +1,61 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code Plugin\n\n"
+  labelString: "master"
+  securityRealm:
+    local:
+      allowsSignup: false
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin"
+            description: "Jenkins administrators"
+            permissions:
+              - "Overall/Administer"
+            assignments:
+              - "admin"
+          - name: "developer"
+            description: "Jenkins developers"
+            permissions:
+              - "Job/Build"
+              - "Job/Cancel"
+              - "Job/Workspace"
+            assignments:
+              - "developer"
+          - name: "readonly"
+            description: "Read-only users"
+            permissions:
+              - "Overall/Read"
+              - "Job/Read"
+            assignments:
+              - "authenticated"
+              - "anonymous"
+  remotingSecurity:
+    enabled: true
+  slaveAgentPort: 50000
+  agentProtocols:
+    - "JNLP4-connect"
+  disableRememberMe: false
+  mode: EXCLUSIVE
+  numExecutors: 2
+  primaryView:
+    all:
+      name: "all"
+  quietPeriod: 5
+  scmCheckoutRetryCount: 0
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: FOO
+            value: BAR
+security:
+  remotingCLI:
+    enabled: false
+  globaljobdslsecurityconfiguration:
+    useScriptSecurity: false
+unclassified:
+  location:
+    url: "http://localhost:8080/"
+    adminAddress: no-reply@example.org
+jobs:
+  - url: https://raw.githubusercontent.com/mattandes/auto-cicd-infra-example/master/jenkins/jobs/seed-job-def.groovy

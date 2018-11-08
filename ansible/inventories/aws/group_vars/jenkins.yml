@@ -1,0 +1,19 @@
+---
+# Java Options
+java_packages:
+  - java-1.8.0-openjdk
+  
+# Jenkins Master Options
+jenkins_plugin_timeout: 90
+jenkins_plugins:
+  - greenballs
+  - git
+  - workflow-aggregator
+  - ssh-slaves
+  - role-strategy
+  - job-dsl
+  - configuration-as-code
+  - configuration-as-code-support
+
+# Jenkins CasC Options
+jenkins_casc_config_template: "config/jenkins.yaml"

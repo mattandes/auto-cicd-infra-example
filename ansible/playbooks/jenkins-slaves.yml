@@ -1,0 +1,10 @@
+---
+- hosts:
+    - jenkins-slaves
+  become: yes
+  roles:
+    - role: geerlingguy.java
+      tags:
+        - java
+    - role: geerlingguy.docker
+    - role: geerlingguy.git

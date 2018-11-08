@@ -1,0 +1,11 @@
+# Terraform Ignores
+.terraform
+*.tfstate
+*.tfstate.backup
+
+# Vagrant Ignores
+.vagrant
+
+# Ansible file
+**/roles/*
+*.retry

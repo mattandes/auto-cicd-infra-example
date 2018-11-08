@@ -1,0 +1,9 @@
+- name: geerlingguy.java
+
+- name: geerlingguy.jenkins
+
+- name: mattandes.jenkins_casc
+
+- name: geerlingguy.docker
+
+- name: geerlingguy.git

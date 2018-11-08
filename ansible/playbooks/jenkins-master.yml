@@ -1,0 +1,28 @@
+---
+- hosts:
+    - jenkins
+  become: yes
+  roles:
+    - role: geerlingguy.java
+      tags:
+        - java
+        - jenkins
+    - role: geerlingguy.jenkins
+      tags:
+        - jenkins
+    - role: mattandes.jenkins_casc
+      tags:
+        - jenkins
+        - jenkins_casc
+    - role: geerlingguy.git
+  tasks:
+    - name: Create developer user
+      uri:
+        url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}/scriptText"
+        method: POST
+        body: "script=jenkins.model.Jenkins.instance.securityRealm.createAccount('developer', 'developer')"
+        user: "{{ jenkins_admin_username }}"
+        password: "{{ jenkins_admin_password }}"
+        force_basic_auth: yes
+        return_content: yes
+      changed_when: false

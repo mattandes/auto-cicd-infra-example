@@ -1,0 +1,4 @@
+---
+- import_playbook: jenkins-master.yml
+
+- import_playbook: jenkins-slaves.yml
