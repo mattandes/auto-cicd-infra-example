@@ -1,3 +1,3 @@
-output "ip" {
-  value = "${aws_eip.jenkins_ip.public_ip}"
+output "jenkins-address" {
+  value = "${aws_elb.jenkins.dns_name}"
 }
