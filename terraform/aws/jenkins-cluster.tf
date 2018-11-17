@@ -127,40 +127,54 @@ resource "aws_elb" "jenkins" {
   }
 }
 
+resource "aws_key_pair" "insecure_key" {
+  key_name   = "${var.key_name}"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key"
+}
+
 resource "aws_instance" "jenkins" {
   ami           = "${lookup(var.amis, var.region)}"
   instance_type = "t2.micro"
-  key_name      = "${var.key_name}"
+  key_name      = "${aws_key_pair.insecure_key.id}"
   tags {
-    Name = "Jenkins"
+    Name = "jenkins"
     Role = "master"
   }
   vpc_security_group_ids = ["${aws_security_group.jenkins.id}"]
   subnet_id = "${aws_subnet.default.id}"
+  root_block_device = {
+    delete_on_termination = true
+  }
 }
 
 resource "aws_instance" "slave_01" {
   ami           = "${lookup(var.amis, var.region)}"
   instance_type = "t2.micro"
-  key_name      = "${var.key_name}"
+  key_name      = "${aws_key_pair.insecure_key.id}"
   tags {
-    Name = "Jenkins_Slave"
+    Name = "jenkins-slave_01"
     Role = "slave"
   }
   vpc_security_group_ids = ["${aws_security_group.default.id}"]
   subnet_id = "${aws_subnet.default.id}"
+  root_block_device = {
+    delete_on_termination = true
+  }  
 }
 
 resource "aws_instance" "slave_02" {
   ami           = "${lookup(var.amis, var.region)}"
   instance_type = "t2.micro"
-  key_name      = "${var.key_name}"
+  key_name      = "${aws_key_pair.insecure_key.id}"
   tags {
-    Name = "Jenkins_Slave"
+    Name = "jenkins-slave_02"
     Role = "slave"
   }
   vpc_security_group_ids = ["${aws_security_group.default.id}"]
   subnet_id = "${aws_subnet.default.id}"
+  root_block_device = {
+    delete_on_termination = true
+  }  
 }
 
 resource "null_resource" "jenkins_cluster" {
