@@ -55,7 +55,7 @@ security:
     useScriptSecurity: false
 unclassified:
   location:
-    url: "http://localhost:8080/"
+    url: "{{ jenkins_casc_jenkins_url }}"
     adminAddress: no-reply@example.org
 jobs:
   - url: https://raw.githubusercontent.com/mattandes/auto-cicd-infra-example/master/jenkins/jobs/seed-job-def.groovy

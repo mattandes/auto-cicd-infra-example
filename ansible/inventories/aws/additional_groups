@@ -1,0 +1,12 @@
+# Have to declare children groups from dynamic inventory
+# in this inventory in order for this to work
+# https://docs.ansible.com/ansible/2.7/user_guide/intro_dynamic_inventory.html#static-groups-of-dynamic-groups
+[tag_Role_master]
+
+[tag_Role_slave]
+
+[jenkins:children]
+tag_Role_master
+
+[jenkins-slaves:children]
+tag_Role_slave
