@@ -1,5 +1,10 @@
 ---
 - hosts:
+    - jenkins-slaves
+  tasks:
+    - setup:
+
+- hosts:
     - jenkins
   become: yes
   roles:
@@ -21,6 +26,23 @@
         url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}/scriptText"
         method: POST
         body: "script=jenkins.model.Jenkins.instance.securityRealm.createAccount('developer', 'developer')"
+        user: "{{ jenkins_admin_username }}"
+        password: "{{ jenkins_admin_password }}"
+        force_basic_auth: yes
+        return_content: yes
+      changed_when: false
+    # Disabling the globaljobdslsecurityconfiguration setting via CasC doesn't work after certain plugins are installed.
+    # Disabling this so that job definition scripts don't need to be manually approved.
+    - name: Disable Global Job DSL Script Security Setting
+      uri:
+        url: "http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}/scriptText"
+        method: POST
+        body: |
+          script=
+          import javaposse.jobdsl.plugin.GlobalJobDslSecurityConfiguration
+          import jenkins.model.GlobalConfiguration
+          GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).useScriptSecurity=false
+          GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).save()
         user: "{{ jenkins_admin_username }}"
         password: "{{ jenkins_admin_password }}"
         force_basic_auth: yes
