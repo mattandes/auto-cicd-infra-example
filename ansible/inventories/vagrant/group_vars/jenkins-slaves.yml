@@ -1,0 +1,7 @@
+---
+# Java Options
+java_packages:
+  - java-1.8.0-openjdk-devel
+
+# Jenkins Node Labels
+jenkins_casc_node_labels: "linux docker"

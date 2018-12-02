@@ -182,7 +182,7 @@ resource "null_resource" "jenkins_cluster" {
     cluster_instance_ids = "${aws_instance.jenkins.id},${aws_instance.slave_01.id},${aws_instance.slave_02.id}"
   }
   provisioner "local-exec" {
-    working_dir = "../../ansible"
+    working_dir = "../../../ansible"
     command = "ansible-playbook -i inventories/aws -u centos playbooks/site.yml"
   }
 }

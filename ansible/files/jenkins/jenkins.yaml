@@ -56,19 +56,27 @@ jenkins:
       launcher:
         sSHLauncher:
           credentialsId: "insecure-key"
+{% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
+          host: "{{ hostvars[host]['ansible_host'] }}"
+{% else %}
           host: "{{ hostvars[host]['ansible_default_ipv4']['address'] }}"
+{% endif %}
           launchTimeoutSeconds: 210
           maxNumRetries: 10
           port: 22
           retryWaitTime: 15
+{% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
+      name: "{{ hostvars[host]['ansible_host'] }}"
+{% else %}
       name: "{{ hostvars[host]['ansible_default_ipv4']['address'] }}"
+{% endif %}
       nodeDescription: "Linux Build Server"
       nodeProperties:
       - envVars:
           env:
           - key: "DARTH"
             value: "VADER"
-      remoteFS: "/home/centos"
+      remoteFS: "/home/{{ jenkins_casc_ssh_user }}"
 {% endfor %}
 {% endif %}
 credentials:
@@ -108,13 +116,13 @@ credentials:
                 NE5OgEXk2wVfZczCZpigBKbKZHNYcelXtTt/nP3rsCuGcM4h53s=
                 -----END RSA PRIVATE KEY-----"
           scope: GLOBAL
-          username: "centos"
+          username: "{{ jenkins_casc_ssh_user }}"
 security:
   remotingCLI:
     enabled: false
 unclassified:
   location:
     url: "{{ jenkins_casc_jenkins_url }}"
-    adminAddress: no-reply@example.org
+    adminAddress: "Jenkins <no-reply@example.org>"
 jobs:
   - url: https://raw.githubusercontent.com/mattandes/auto-cicd-infra-example/master/jenkins/jobs/seed-job-def.groovy

@@ -1,0 +1,6 @@
+[jenkins]
+jenkins ansible_host=192.168.99.52 ansible_password=vagrant ansible_user=vagrant
+
+[jenkins-slaves]
+slave-01 ansible_host=192.168.99.50 ansible_password=vagrant ansible_user=vagrant
+slave-02 ansible_host=192.168.99.51 ansible_password=vagrant ansible_user=vagrant

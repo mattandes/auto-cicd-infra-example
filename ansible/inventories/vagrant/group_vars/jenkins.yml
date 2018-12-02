@@ -21,4 +21,4 @@ jenkins_casc_config_template: "../files/jenkins/jenkins.yaml"
 
 # Jenkins variable used in CasC config template
 jenkins_casc_jenkins_url: "http://localhost:8080/"
-jenkins_casc_ssh_user: centos
+jenkins_casc_ssh_user: vagrant
