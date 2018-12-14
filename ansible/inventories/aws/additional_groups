@@ -5,8 +5,13 @@
 
 [tag_Role_slave]
 
+[tag_Role_artifactory]
+
 [jenkins:children]
 tag_Role_master
 
 [jenkins-slaves:children]
 tag_Role_slave
+
+[artifactory:children]
+tag_Role_artifactory

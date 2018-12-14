@@ -72,7 +72,7 @@ resource "aws_security_group" "jenkins" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # HTTP access from anywhere
+  # HTTP access from local subnet
   ingress {
     from_port   = 8080
     to_port     = 8080
@@ -89,10 +89,49 @@ resource "aws_security_group" "jenkins" {
   }
 }
 
+# Our security group to access Artifactory
+resource "aws_security_group" "artifactory" {
+  name        = "artifactory-sg"
+  description = "Artifactory SG that allows SSH and HTTP"
+  vpc_id      = "${aws_vpc.default.id}"
+
+  # SSH access from anywhere
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # HTTP access from local subnet
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  # HTTPS access from local subnet
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  # outbound internet access
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 # Our security group to access the ELB
-resource "aws_security_group" "elb" {
-  name        = "elg-sg"
-  description = "ELB SG that allows SSH and HTTP"
+resource "aws_security_group" "jenkins_elb" {
+  name        = "jenkins-elb-sg"
+  description = "Jenkins ELB SG that allows and HTTP"
   vpc_id      = "${aws_vpc.default.id}"
 
   # HTTP access from anywhere
@@ -112,11 +151,41 @@ resource "aws_security_group" "elb" {
   }
 }
 
+resource "aws_security_group" "artifactory_elb" {
+  name        = "artifactory-elb-sg"
+  description = "Artifactory ELB SG that allows HTTP and HTTPS"
+  vpc_id      = "${aws_vpc.default.id}"
+
+  # HTTP access from anywhere
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # HTTPS access from anywhere
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # outbound internet access
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_elb" "jenkins" {
   name = "jenkins-elb"
 
   subnets         = ["${aws_subnet.elb.id}","${aws_subnet.default.id}"]
-  security_groups = ["${aws_security_group.elb.id}"]
+  security_groups = ["${aws_security_group.jenkins_elb.id}"]
   instances       = ["${aws_instance.jenkins.id}"]
 
   listener {
@@ -124,6 +193,28 @@ resource "aws_elb" "jenkins" {
     instance_protocol = "http"
     lb_port           = 80
     lb_protocol       = "http"
+  }
+}
+
+resource "aws_elb" "artifactory" {
+  name = "artifactory-elb"
+
+  subnets         = ["${aws_subnet.elb.id}","${aws_subnet.default.id}"]
+  security_groups = ["${aws_security_group.artifactory_elb.id}"]
+  instances       = ["${aws_instance.artifactory.id}"]
+
+  listener {
+    instance_port     = 80
+    instance_protocol = "http"
+    lb_port           = 80
+    lb_protocol       = "http"
+  }
+
+  listener {
+    instance_port     = 443
+    instance_protocol = "https"
+    lb_port           = 443
+    lb_protocol       = "https"
   }
 }
 
@@ -141,6 +232,21 @@ resource "aws_instance" "jenkins" {
     Role = "master"
   }
   vpc_security_group_ids = ["${aws_security_group.jenkins.id}"]
+  subnet_id = "${aws_subnet.default.id}"
+  root_block_device = {
+    delete_on_termination = true
+  }
+}
+
+resource "aws_instance" "artifactory" {
+  ami           = "${lookup(var.amis, var.region)}"
+  instance_type = "t2.micro"
+  key_name      = "${aws_key_pair.insecure_key.id}"
+  tags {
+    Name = "artifactory"
+    Role = "artifactory"
+  }
+  vpc_security_group_ids = ["${aws_security_group.artifactory.id}"]
   subnet_id = "${aws_subnet.default.id}"
   root_block_device = {
     delete_on_termination = true
