@@ -1,13 +1,16 @@
 ---
-- name: "slave-01"
+- name: "artifactory"
   box:
     vb: "geerlingguy/centos7"
   nics:
     - type: "private_network"
       ip_addr: "192.168.99.50"
-  ram: "2048"
+  ports:
+    - guest_port: "443"
+      host_port: "8443"
+  ram: "4096"
   vcpu: "1"
-- name: "slave-02"
+- name: "slave-01"
   box:
     vb: "geerlingguy/centos7"
   nics:
@@ -15,12 +18,20 @@
       ip_addr: "192.168.99.51"
   ram: "2048"
   vcpu: "1"
-- name: "jenkins"
+- name: "slave-02"
   box:
     vb: "geerlingguy/centos7"
   nics:
     - type: "private_network"
       ip_addr: "192.168.99.52"
+  ram: "2048"
+  vcpu: "1"
+- name: "jenkins"
+  box:
+    vb: "geerlingguy/centos7"
+  nics:
+    - type: "private_network"
+      ip_addr: "192.168.99.53"
   ports:
     - guest_port: "8080"
   ram: "2048"

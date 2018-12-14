@@ -7,3 +7,9 @@
 - name: geerlingguy.docker
 
 - name: geerlingguy.git
+
+- name: geerlingguy.repo-epel
+
+- name: geerlingguy.pip
+
+- name: mattandes.artifactory
