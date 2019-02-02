@@ -3,7 +3,7 @@ def jobDisplayName = 'Jenkins Seed Job'
 def jobDescription = 'This job will load all of the other jobs definitions from the repository.'
 def gitUrl = 'https://github.com/mattandes/auto-cicd-infra-example.git'
 def gitBranch = 'master'
-def dslScriptsTargets = 'jenkins/jobs/**/jobdef.groovy'
+def dslScriptsTargets = 'jenkins/jobs/**/*_jobdef.groovy'
 
 job(jobName) {
 	description(jobDescription)

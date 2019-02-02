@@ -1,7 +1,6 @@
+def repo = 'https://github.com/mattandes/springboot-gs-rest-service.git'
+
 pipelineJob('springboot-gs-rest-service-build') {
-
-  def repo = 'https://github.com/mattandes/springboot-gs-rest-service.git'
-
   triggers {
     scm('H/1 * * * *')
   }
@@ -14,7 +13,7 @@ pipelineJob('springboot-gs-rest-service-build') {
         git {
           remote { url(repo) }
           branches('master')
-          scriptPath('jenkins-pipeline/Jenkinsfile')
+          scriptPath('Jenkinsfile')
           extensions { }  // required as otherwise it may try to tag the repo, which you may not want
         }
       }
