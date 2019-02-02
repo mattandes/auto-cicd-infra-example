@@ -65,6 +65,7 @@ jenkins:
           maxNumRetries: 10
           port: 22
           retryWaitTime: 15
+          sshHostKeyVerificationStrategy: nonVerifyingKeyVerificationStrategy
 {% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
       name: "{{ hostvars[host]['ansible_host'] }}"
 {% else %}
