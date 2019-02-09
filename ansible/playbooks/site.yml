@@ -1,6 +1,6 @@
 ---
+- import_playbook: artifactory.yml
+
 - import_playbook: jenkins-slaves.yml
 
 - import_playbook: jenkins-master.yml
-
-- import_playbook: artifactory.yml

@@ -1,7 +1,14 @@
 ---
 jenkins:
-  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code Plugin\n\n"
+  systemMessage: |
+    <div style="background-color: #dddddd;padding: 0.75em;border: 1px solid black;border-radius: 5px">
+      <span style="font-size: 1.75em;font-weight: bold">Automated Jenkins Server</span><br/><br/>
+      This Jenkins server is configured automatically by Jenkins Configuration as Code Plugin and Ansible. <b>NO NOT</b> make manual changes.<br/><br/>
+    </div>
   labelString: "master"
+  markupFormatter:
+    rawHtml:
+      disableSyntaxHighlighting: false
   securityRealm:
     local:
       allowsSignup: false
@@ -126,5 +133,21 @@ unclassified:
   location:
     url: "{{ jenkins_casc_jenkins_url }}"
     adminAddress: "Jenkins <no-reply@example.org>"
+{% if groups['artifactory'] > 0 %}
+{% for host in groups['artifactory'] %}
+  artifactorybuilder:
+    useCredentialsPlugin: false
+    artifactoryServers:
+      - serverId: artifactory
+{% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
+        artifactoryUrl: "http://{{ hostvars[host]['ansible_host'] }}:8081/artifactory"
+{% else %}
+        artifactoryUrl: "http://{{ hostvars[host]['ansible_default_ipv4']['address'] }}:8081/artifactory"
+{% endif %}
+        deployerCredentialsConfig:
+          username: '{{ jenkins_casc_artifactory_username }}'
+          password: '{{ jenkins_casc_artifactory_password }}'
+{% endfor %}
+{% endif %}
 jobs:
   - url: https://raw.githubusercontent.com/mattandes/auto-cicd-infra-example/master/jenkins/jobs/seed-job-def.groovy
