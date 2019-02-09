@@ -6,7 +6,7 @@
 
 - hosts:
     - jenkins
-  become: yes
+  become: true
   roles:
     - role: geerlingguy.java
       tags:
@@ -28,10 +28,11 @@
         body: "script=jenkins.model.Jenkins.instance.securityRealm.createAccount('developer', 'developer')"
         user: "{{ jenkins_admin_username }}"
         password: "{{ jenkins_admin_password }}"
-        force_basic_auth: yes
-        return_content: yes
+        force_basic_auth: true
+        return_content: true
       changed_when: false
-    # Disabling the globaljobdslsecurityconfiguration setting via CasC doesn't work after certain plugins are installed.
+    # Disabling the globaljobdslsecurityconfiguration setting
+    # via CasC doesn't work after certain plugins are installed.
     # Disabling this so that job definition scripts don't need to be manually approved.
     - name: Disable Global Job DSL Script Security Setting
       uri:
@@ -45,6 +46,6 @@
           GlobalConfiguration.all().get(GlobalJobDslSecurityConfiguration.class).save()
         user: "{{ jenkins_admin_username }}"
         password: "{{ jenkins_admin_password }}"
-        force_basic_auth: yes
-        return_content: yes
+        force_basic_auth: true
+        return_content: true
       changed_when: false

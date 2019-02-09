@@ -2,7 +2,7 @@
 # Java Options
 java_packages:
   - java-1.8.0-openjdk
-  
+
 # Jenkins Master Options
 jenkins_plugin_timeout: 90
 jenkins_plugins:
