@@ -4,6 +4,7 @@ def jobDescription = 'This job will load all of the other jobs definitions from 
 def gitUrl = 'https://github.com/mattandes/auto-cicd-infra-example.git'
 def gitBranch = 'master'
 def dslScriptsTargets = 'jenkins/jobs/**/*_jobdef.groovy'
+def buildsToKeep = 10
 
 job(jobName) {
 	description(jobDescription)
@@ -15,6 +16,9 @@ job(jobName) {
 			ignorePostCommitHooks(false)
 		}
 	}
+    logRotator {
+        numToKeep(buildsToKeep)
+    }
 	concurrentBuild(false)
     scm {
         git {

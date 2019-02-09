@@ -1,4 +1,5 @@
 def repo = 'https://github.com/mattandes/springboot-gs-rest-service.git'
+def buildsToKeep = 15
 
 pipelineJob('springboot-gs-rest-service-build') {
   triggers {
@@ -6,7 +7,9 @@ pipelineJob('springboot-gs-rest-service-build') {
   }
   description("SpringBoot GS Rest Service Build")
   displayName("SpringBoot GS Rest Service Build")
-
+  logRotator {
+    numToKeep(buildsToKeep)
+  }
   definition {
     cpsScm {
       scm {
