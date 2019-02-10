@@ -89,10 +89,10 @@ resource "aws_security_group" "jenkins" {
   }
 }
 
-# Our security group to access Artifactory
-resource "aws_security_group" "artifactory" {
-  name        = "artifactory-sg"
-  description = "Artifactory SG that allows SSH and HTTP"
+# Our security group to access nexus
+resource "aws_security_group" "nexus" {
+  name        = "nexus-sg"
+  description = "nexus SG that allows SSH and HTTP"
   vpc_id      = "${aws_vpc.default.id}"
 
   # SSH access from anywhere
@@ -105,8 +105,8 @@ resource "aws_security_group" "artifactory" {
 
   # HTTP access from local subnet
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 8081
+    to_port     = 8081
     protocol    = "tcp"
     cidr_blocks = ["10.0.0.0/16"]
   }
@@ -151,15 +151,15 @@ resource "aws_security_group" "jenkins_elb" {
   }
 }
 
-resource "aws_security_group" "artifactory_elb" {
-  name        = "artifactory-elb-sg"
-  description = "Artifactory ELB SG that allows HTTP and HTTPS"
+resource "aws_security_group" "nexus_elb" {
+  name        = "nexus-elb-sg"
+  description = "nexus ELB SG that allows HTTP and HTTPS"
   vpc_id      = "${aws_vpc.default.id}"
 
   # HTTP access from anywhere
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 8081
+    to_port     = 8081
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -196,17 +196,17 @@ resource "aws_elb" "jenkins" {
   }
 }
 
-resource "aws_elb" "artifactory" {
-  name = "artifactory-elb"
+resource "aws_elb" "nexus" {
+  name = "nexus-elb"
 
   subnets         = ["${aws_subnet.elb.id}","${aws_subnet.default.id}"]
-  security_groups = ["${aws_security_group.artifactory_elb.id}"]
-  instances       = ["${aws_instance.artifactory.id}"]
+  security_groups = ["${aws_security_group.nexus_elb.id}"]
+  instances       = ["${aws_instance.nexus.id}"]
 
   listener {
-    instance_port     = 80
+    instance_port     = 8081
     instance_protocol = "http"
-    lb_port           = 80
+    lb_port           = 8081
     lb_protocol       = "http"
   }
 
@@ -238,15 +238,15 @@ resource "aws_instance" "jenkins" {
   }
 }
 
-resource "aws_instance" "artifactory" {
+resource "aws_instance" "nexus" {
   ami           = "${lookup(var.amis, var.region)}"
   instance_type = "t2.micro"
   key_name      = "${aws_key_pair.insecure_key.id}"
   tags {
-    Name = "artifactory"
-    Role = "artifactory"
+    Name = "nexus"
+    Role = "nexus"
   }
-  vpc_security_group_ids = ["${aws_security_group.artifactory.id}"]
+  vpc_security_group_ids = ["${aws_security_group.nexus.id}"]
   subnet_id = "${aws_subnet.default.id}"
   root_block_device = {
     delete_on_termination = true

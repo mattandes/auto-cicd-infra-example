@@ -1,0 +1,23 @@
+---
+# Java Options
+java_packages:
+  - java-1.8.0-openjdk
+
+# Jenkins Master Options
+jenkins_plugin_timeout: 90
+jenkins_plugins:
+  - greenballs
+  - git
+  - workflow-aggregator
+  - ssh-slaves
+  - role-strategy
+  - blueocean
+  - job-dsl
+  - configuration-as-code
+  - configuration-as-code-support
+
+# Jenkins CasC Options
+jenkins_casc_config_template: "../files/jenkins/jenkins.yaml.j2"
+
+# Jenkins variable used in CasC config template
+jenkins_casc_jenkins_url: "http://localhost:8080/"

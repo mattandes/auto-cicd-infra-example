@@ -1,5 +1,5 @@
 ---
-- import_playbook: artifactory.yml
+- import_playbook: nexus.yml
 
 - import_playbook: jenkins-slaves.yml
 

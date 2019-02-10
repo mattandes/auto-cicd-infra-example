@@ -1,0 +1,3 @@
+---
+# Nexus Sonatype Options
+nexus_anonymous_access: true

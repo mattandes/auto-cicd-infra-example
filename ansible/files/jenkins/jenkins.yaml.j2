@@ -56,6 +56,17 @@ jenkins:
         env:
           - key: FOO
             value: BAR
+{% if groups['nexus'] > 0 %}
+{% for host in groups['nexus'] %}
+{% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
+          - key: NEXUS_URL
+            value: "http://{{ hostvars[host]['ansible_host'] }}:8081"
+{% else %}
+          - key: NEXUS_URL
+            value: "http://{{ hostvars[host]['ansible_default_ipv4']['address'] }}:8081"
+{% endif %}
+{% endfor %}
+{% endif %}
 {% if groups['jenkins-slaves'] > 0 %}
   nodes:
 {% for host in groups['jenkins-slaves'] %}
@@ -85,6 +96,17 @@ jenkins:
           env:
           - key: "DARTH"
             value: "VADER"
+{% if groups['nexus'] > 0 %}
+{% for host in groups['nexus'] %}
+{% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
+          - key: NEXUS_URL
+            value: "http://{{ hostvars[host]['ansible_host'] }}:8081"
+{% else %}
+          - key: NEXUS_URL
+            value: "http://{{ hostvars[host]['ansible_default_ipv4']['address'] }}:8081"
+{% endif %}
+{% endfor %}
+{% endif %}
       remoteFS: "/home/{{ jenkins_casc_ssh_user }}"
 {% endfor %}
 {% endif %}
@@ -133,21 +155,5 @@ unclassified:
   location:
     url: "{{ jenkins_casc_jenkins_url }}"
     adminAddress: "Jenkins <no-reply@example.org>"
-{% if groups['artifactory'] > 0 %}
-{% for host in groups['artifactory'] %}
-  artifactorybuilder:
-    useCredentialsPlugin: false
-    artifactoryServers:
-      - serverId: artifactory
-{% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
-        artifactoryUrl: "http://{{ hostvars[host]['ansible_host'] }}:8081/artifactory"
-{% else %}
-        artifactoryUrl: "http://{{ hostvars[host]['ansible_default_ipv4']['address'] }}:8081/artifactory"
-{% endif %}
-        deployerCredentialsConfig:
-          username: '{{ jenkins_casc_artifactory_username }}'
-          password: '{{ jenkins_casc_artifactory_password }}'
-{% endfor %}
-{% endif %}
 jobs:
   - url: https://raw.githubusercontent.com/mattandes/auto-cicd-infra-example/master/jenkins/jobs/seed-job-def.groovy

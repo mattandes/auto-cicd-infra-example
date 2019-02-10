@@ -1,13 +1,10 @@
 ---
-- name: "artifactory"
+- name: "nexus"
   box:
     vb: "geerlingguy/centos7"
   nics:
     - type: "private_network"
       ip_addr: "192.168.99.50"
-  ports:
-    - guest_port: "443"
-      host_port: "8443"
   ram: "4096"
   vcpu: "1"
 - name: "slave-01"

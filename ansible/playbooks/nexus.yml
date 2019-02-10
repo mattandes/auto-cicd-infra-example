@@ -1,0 +1,7 @@
+---
+- hosts:
+    - nexus
+  become: true
+  roles:
+    - role: geerlingguy.java
+    - role: ansible-thoteam.nexus3-oss

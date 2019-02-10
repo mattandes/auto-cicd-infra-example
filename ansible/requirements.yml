@@ -13,4 +13,4 @@
 
 - name: geerlingguy.pip
 
-- name: mattandes.artifactory
+- name: ansible-thoteam.nexus3-oss

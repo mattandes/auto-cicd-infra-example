@@ -5,7 +5,7 @@
 
 [tag_Role_slave]
 
-[tag_Role_artifactory]
+[tag_Role_nexus]
 
 [jenkins:children]
 tag_Role_master
@@ -13,5 +13,5 @@ tag_Role_master
 [jenkins-slaves:children]
 tag_Role_slave
 
-[artifactory:children]
-tag_Role_artifactory
+[nexus:children]
+tag_Role_nexus

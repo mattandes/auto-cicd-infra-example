@@ -1,9 +1,0 @@
----
-- hosts:
-    - artifactory
-  become: true
-  roles:
-    - role: geerlingguy.docker
-    - role: geerlingguy.repo-epel
-    - role: geerlingguy.pip
-    - role: mattandes.artifactory

@@ -1,8 +1,0 @@
----
-# Docker role options
-docker_install_compose: false
-
-# Pip options
-pip_install_packages:
-  - name: docker
-  - name: docker-compose
