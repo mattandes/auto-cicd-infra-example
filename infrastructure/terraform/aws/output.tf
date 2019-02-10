@@ -2,6 +2,6 @@ output "jenkins-address" {
   value = "${aws_elb.jenkins.dns_name}"
 }
 
-output "artifactory-address" {
-  value = "${aws_elb.artifactory.dns_name}"
+output "nexus-address" {
+  value = "${aws_elb.nexus.dns_name}"
 }
