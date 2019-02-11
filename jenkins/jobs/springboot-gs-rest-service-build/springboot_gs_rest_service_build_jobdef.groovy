@@ -1,4 +1,4 @@
-def repo = 'https://github.com/mattandes/springboot-gs-rest-service.git'
+def repo = "${GITLAB_URL}/examples/springboot-gs-rest-service.git"
 def buildsToKeep = 15
 
 pipelineJob('springboot-gs-rest-service-build') {
