@@ -7,3 +7,6 @@ slave-02 ansible_host=192.168.99.52 ansible_password=vagrant ansible_user=vagran
 
 [nexus]
 nexus ansible_host=192.168.99.50 ansible_password=vagrant ansible_user=vagrant
+
+[gitlab]
+gitlab ansible_host=192.168.99.49 ansible_password=vagrant ansible_user=vagrant

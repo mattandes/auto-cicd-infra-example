@@ -1,13 +1,26 @@
 ---
 - hosts:
     - jenkins-slaves
-    - artifactory
+    - nexus
   tasks:
     - setup:
 
 - hosts:
     - jenkins
   become: true
+  pre_tasks:
+    - name: Decrypt Gitlab root user's private key due to template formatting issue
+      set_fact:
+        gitlab_root_private_key_decrypted: "{{ gitlab_root_private_key }}"
+      no_log: true
+      tags:
+        - jenkins_casc
+    - name: Decrypt Jenkins slave node private key due to template formatting issue
+      set_fact:
+        jenkins_casc_slave_private_key_decrypted: "{{ jenkins_casc_slave_private_key }}"
+      no_log: true
+      tags:
+        - jenkins_casc
   roles:
     - role: geerlingguy.java
       tags:

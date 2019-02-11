@@ -1,0 +1,23 @@
+---
+# GitLab Options
+gitlab_root_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          34373638366662393566613731353639623139653535613632366130383431316166343539376338
+          6664623466623730623562643861306661373639646665640a396464633461666363323661366662
+          37333039373035363361626434333832323138623236346634616466643864313564653562353066
+          6436653830396565380a613061373634316137646630663431363765366535646365306531343836
+          6466
+gitlab_external_url: "{{ gitlab_url }}"
+gitlab_self_signed_cert_subj: "/CN={{ gitlab_external_url | urlsplit('hostname') }}"
+gitlab_groups:
+  - examples
+gitlab_projects:
+  - name: springboot-gs-rest-service
+    namespace: examples
+    import_url: https://github.com/mattandes/springboot-gs-rest-service.git
+
+# Pip Options
+pip_install_packages:
+  - name: python-gitlab
+    version: "1.6.0"
+    state: present

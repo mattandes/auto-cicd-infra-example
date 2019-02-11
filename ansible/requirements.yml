@@ -14,3 +14,5 @@
 - name: geerlingguy.pip
 
 - name: ansible-thoteam.nexus3-oss
+
+- name: geerlingguy.gitlab

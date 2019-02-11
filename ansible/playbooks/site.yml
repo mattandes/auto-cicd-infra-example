@@ -1,6 +1,8 @@
 ---
 - import_playbook: nexus.yml
 
+- import_playbook: gitlab.yml
+
 - import_playbook: jenkins-slaves.yml
 
 - import_playbook: jenkins-master.yml

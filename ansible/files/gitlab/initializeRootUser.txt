@@ -1,0 +1,4 @@
+user = User.where(id: 1).first;
+user.password = user.password_confirmation = '{{ gitlab_root_password_decrypted }}';
+user.password_automatically_set=false;
+user.save!;

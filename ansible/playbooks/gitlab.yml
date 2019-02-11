@@ -1,0 +1,116 @@
+---
+- hosts:
+    - gitlab
+  become: true
+  pre_tasks:
+    - name: Set Gitlab external URL (VitrualBox)
+      set_fact:
+        gitlab_url: "https://{{ ansible_host }}"
+      when:
+        - ansible_bios_version == "VirtualBox"
+        - gitlab_url is undefined
+    - name: Set Gitlab external URL (Cloud)
+      set_fact:
+        gitlab_url: "https://{{ ansible_default_ipv4.address }}"
+      when:
+        - ansible_bios_version != "VirtualBox"
+        - gitlab_url is undefined
+    - name: Decrypt Gitlab root user's password
+      set_fact:
+        gitlab_root_password_decrypted: "{{ gitlab_root_password }}"
+      no_log: true
+  roles:
+    - role: geerlingguy.repo-epel
+    - role: geerlingguy.pip
+    - role: geerlingguy.gitlab
+  tasks:
+    - meta: flush_handlers
+    - name: Copy over root user initialization commands file
+      template:
+        src: ../files/gitlab/initializeRootUser.txt
+        dest: "~/initializeRootUser.txt"
+        mode: 0640
+    - name: Run initialization commands via gitlab console
+      shell: cat ~/initializeRootUser.txt | gitlab-rails console production && touch /etc/gitlab-root-user-initialized
+      args:
+        creates: /etc/gitlab-root-user-initialized
+    - name: Copy over Gitlab generateAccessToken script
+      template:
+        src: ../files/gitlab/generateAccessToken.sh
+        dest: "~/generateAccessToken.sh"
+        mode: 0750
+    - name: Generate private access token
+      shell: "~/generateAccessToken.sh"
+      args:
+        creates: /etc/gitlab-access-token
+    - name: Read access token from file
+      slurp:
+        src: /etc/gitlab-access-token
+      register: gitlab_access_token
+    - name: Create python-gitlab configuraiton file
+      copy:
+        dest: /etc/python-gitlab.cfg
+        owner: root
+        group: root
+        mode: 0644
+        content: |
+          [global]
+          default = local
+          ssl_verify = false
+          [local]
+          url = {{ gitlab_external_url }}
+          private_token = {{ gitlab_access_token['content'] | b64decode }}
+
+    - name: Get list of current groups in Gitlab
+      shell: gitlab -o json group list --all
+      environment:
+        PYTHONWARNINGS: ignore
+      register: group_list
+      changed_when: false
+    - name: Store groups in fact
+      set_fact:
+        gitlab_group_list: "{{ group_list.stdout | from_json }}"
+    - name: Create Gitlab groups
+      shell: "gitlab group create --name {{ item }} --path {{ item }} --visibility public"
+      environment:
+        PYTHONWARNINGS: ignore
+      when: gitlab_group_list | selectattr('path','equalto',item) | list | count == 0
+      with_items: "{{ gitlab_groups }}"
+
+    - name: Get list of all namespaces in Gitlab
+      shell: gitlab -o json namespace list --all
+      environment:
+        PYTHONWARNINGS: ignore
+      register: namespace_list
+      changed_when: false
+    - name: Store namespaces in fact
+      set_fact:
+        gitlab_namespace_list: "{{ namespace_list.stdout | from_json }}"
+
+    - name: Get list of current projects in Gitlab
+      shell: gitlab -o json project list
+      environment:
+        PYTHONWARNINGS: ignore
+      register: project_list
+      changed_when: false
+    - name: Store projects in fact
+      set_fact:
+        gitlab_project_list: "{{ project_list.stdout | from_json }}"
+    - name: Create Gitlab projects
+      shell: "gitlab project create --name {{ item.name }} --path {{ item.name }} --namespace-id {{ (gitlab_namespace_list | selectattr('name','equalto',item.namespace) | first).id }} --visibility public {% if (item.import_url | default(false)) %}--import-url {{ item.import_url }}{% endif %}"
+      environment:
+        PYTHONWARNINGS: ignore
+      when: gitlab_project_list | selectattr('path_with_namespace','equalto',item.namespace + '/' + item.name) | list | count == 0
+      with_items: "{{ gitlab_projects }}"
+
+    - name: Get list of Gitlab root user's SSH keys
+      shell: gitlab -o json user-key list --user-id 1 --all
+      environment:
+        PYTHONWARNINGS: ignore
+      register: root_ssh_keys
+      changed_when: false
+    - name: Add Gitlab's root user deploy key
+      shell: "gitlab user-key create --user-id 1 --title deployer --key '{{ gitlab_root_public_key }}'"
+      environment:
+        PYTHONWARNINGS: ignore
+      when: root_ssh_keys.stdout | from_json | selectattr('title','equalto','deployer') | list | count == 0

@@ -7,6 +7,14 @@
       ip_addr: "192.168.99.50"
   ram: "4096"
   vcpu: "1"
+- name: "gitlab"
+  box:
+    vb: "geerlingguy/centos7"
+  nics:
+    - type: "private_network"
+      ip_addr: "192.168.99.49"
+  ram: "4096"
+  vcpu: "1"
 - name: "slave-01"
   box:
     vb: "geerlingguy/centos7"
