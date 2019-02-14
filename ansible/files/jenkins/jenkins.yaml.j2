@@ -56,6 +56,8 @@ jenkins:
         env:
           - key: FOO
             value: BAR
+          - key: GIT_SSL_NO_VERIFY
+            value: true
 {% if groups['nexus'] > 0 %}
 {% for host in groups['nexus'] %}
 {% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
@@ -102,6 +104,8 @@ jenkins:
           env:
           - key: "DARTH"
             value: "VADER"
+          - key: GIT_SSL_NO_VERIFY
+            value: true
 {% if groups['nexus'] > 0 %}
 {% for host in groups['nexus'] %}
 {% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
