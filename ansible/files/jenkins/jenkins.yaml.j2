@@ -132,7 +132,7 @@ credentials:
           privateKeySource:
             directEntry:
               privateKey: |
-                {{ gitlab_root_private_key_decrypted | indent(20) }}
+                {{ gitlab_root_private_key_decrypted | indent(16) }}
       - basicSSHUserPrivateKey:
           id: insecure-key
           scope: SYSTEM
@@ -141,7 +141,7 @@ credentials:
           privateKeySource:
             directEntry:
               privateKey: |
-                {{ jenkins_casc_slave_private_key_decrypted | indent(20) }}
+                {{ jenkins_casc_slave_private_key_decrypted | indent(16) }}
 security:
   remotingCLI:
     enabled: false
