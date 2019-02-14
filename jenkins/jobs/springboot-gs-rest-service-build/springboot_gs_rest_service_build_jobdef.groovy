@@ -1,4 +1,5 @@
-def repo = "${GITLAB_URL}/examples/springboot-gs-rest-service.git"
+def repo = "git@${GITLAB_HOST}:examples/springboot-gs-rest-service.git"
+def gitCredential = "gitlab-root-private-key"
 def buildsToKeep = 15
 
 pipelineJob('springboot-gs-rest-service-build') {
@@ -14,7 +15,10 @@ pipelineJob('springboot-gs-rest-service-build') {
     cpsScm {
       scm {
         git {
-          remote { url(repo) }
+          remote { 
+            url(repo)
+            credentials(gitCredential)
+          }
           branches('master')
           scriptPath('Jenkinsfile')
           extensions { 

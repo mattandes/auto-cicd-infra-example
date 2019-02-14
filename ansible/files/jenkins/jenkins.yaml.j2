@@ -71,8 +71,8 @@ jenkins:
 {% endif %}
 {% if groups['gitlab'] > 0 %}
 {% for host in groups['gitlab'] %}
-          - key: GITLAB_URL
-            value: "{{ hostvars[host]['gitlab_external_url'] }}"
+          - key: GITLAB_HOST
+            value: "{{ hostvars[host]['gitlab_external_url'] | urlsplit('hostname') }}"
 {% endfor %}
 {% endif %}
 {% if groups['jenkins-slaves'] > 0 %}
