@@ -2,7 +2,6 @@
 gitlab_host={{ gitlab_external_url }}
 gitlab_user='root'
 gitlab_password='{{ gitlab_root_password_decrypted }}'
-#export LANG=C
 
 # curl for the login page to get a session cookie and the sources with the auth tokens
 body_header=$(curl -k -c cookies.txt -i "${gitlab_host}/users/sign_in" -s)
