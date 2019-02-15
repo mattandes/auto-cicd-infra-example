@@ -22,7 +22,8 @@ pipelineJob('springboot-gs-rest-service-build') {
           branches('master')
           scriptPath('Jenkinsfile')
           extensions { 
-            cleanBeforeCheckout()
+            wipeOutWorkspace()
+            localBranch()
           }
         }
       }
