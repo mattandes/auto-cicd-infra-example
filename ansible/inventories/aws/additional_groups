@@ -7,6 +7,8 @@
 
 [tag_Role_nexus]
 
+[tag_Role_gitlab]
+
 [jenkins:children]
 tag_Role_master
 
@@ -15,3 +17,6 @@ tag_Role_slave
 
 [nexus:children]
 tag_Role_nexus
+
+[gitlab:children]
+tag_Role_gitlab

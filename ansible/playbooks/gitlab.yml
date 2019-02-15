@@ -19,6 +19,10 @@
       set_fact:
         gitlab_root_password_decrypted: "{{ gitlab_root_password }}"
       no_log: true
+    - name: Ensure Perl is installed
+      package:
+        name: perl
+        state: present
   roles:
     - role: geerlingguy.repo-epel
     - role: geerlingguy.pip
