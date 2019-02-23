@@ -5,7 +5,7 @@
   pre_tasks:
     - name: Set Gitlab external URL (VitrualBox)
       set_fact:
-        gitlab_url: "https://{{ ansible_host }}"
+        gitlab_url: "https://gitlab"
       when:
         - ansible_bios_version == "VirtualBox"
         - gitlab_url is undefined

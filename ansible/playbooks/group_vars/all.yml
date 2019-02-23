@@ -1,4 +1,8 @@
 ---
+# Nexus Options
+nexus_hostname: nexus
+
+# GitLab Options
 gitlab_root_public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC808t5wd+Cgd5DS93g6eMtli4EFe1u7fZhfmFObnfinTQGiVluWlwvNSAfPO8zpgFVhDWYJ0l+EIX9pVUmAH8BdUb1efR+FyvCMtrE4+93izs003+SENkxGGPYQtWWBZjKX8Bjku+4dbgw+Z7XY0kwRD2hoKUEx7O9nQlLbn5nP9FNFt2KpnSYzCtcMrSbuTglQt962+DPgb67Vm9N0bPkc7JpJ8EjTdqUeQFhEdYTnf32aW1QDCTYS8UiYlDapn1/F0f5VeKur0iz4hs1jJky9cS/KeZDnDS2Dtjngdd54p/hDiwyAZmM28+nviQyf8OtVf6JU/4qQtdN70dKr/KL deployer
 gitlab_root_private_key: !vault |
           $ANSIBLE_VAULT;1.1;AES256

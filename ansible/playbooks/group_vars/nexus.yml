@@ -1,3 +1,54 @@
 ---
+# HTTPD Options
+apache_ssl_protocol: "TLSv1.1 TLSv1.2"
+apache_ssl_cipher_suite: "AES128+EECDH:AES128+EDH:AES256+EECDH:AES256+EDH"
+
 # Nexus Sonatype Options
 nexus_anonymous_access: true
+nexus_delete_default_repos: true
+httpd_setup_enable: true
+httpd_server_name: "{{ nexus_hostname }}"
+nexus_public_hostname: "{{ nexus_hostname }}"
+httpd_copy_ssl_files: false
+httpd_ssl_cert_file_location: "/etc/pki/tls/certs/nexus.vm.crt"
+httpd_ssl_cert_key_location: "/etc/pki/tls/private/nexus.vm.key"
+
+# Maven Repos
+nexus_repos_maven_proxy:
+  - name: maven-central
+    remote_url: 'https://repo1.maven.org/maven2/'
+    layout_policy: permissive
+nexus_repos_maven_hosted:
+  - name: maven-releases
+    version_policy: release
+    write_policy: allow_once
+  - name: maven-snapshots
+    version_policy: snapshot
+    write_policy: allow
+nexus_repos_maven_group:
+  - name: maven-all
+    member_repos:
+      - maven-central
+      - maven-releases
+
+# Docker Repos
+nexus_config_docker: true
+nexus_repos_docker_hosted:
+  - name: docker-hosted
+    #http_port: "{{ nexus_docker_hosted_port }}"
+    v1_enabled: false
+    write_policy: allow
+nexus_repos_docker_proxy:
+  - name: docker-hub
+    #http_port: "{{ nexus_docker_proxy_port }}"
+    v1_enabled: false
+    index_type: "HUB"
+    proxy_url: "https://registry-1.docker.io"
+    use_nexus_certificates_to_access_index: false
+nexus_repos_docker_group:
+  - name: docker-all
+    #http_port: "{{ nexus_docker_group_port }}"
+    v1_enabled: false
+    member_repos:
+      - docker-hosted
+      - docker-hub

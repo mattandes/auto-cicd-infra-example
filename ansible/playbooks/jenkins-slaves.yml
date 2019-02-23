@@ -8,3 +8,34 @@
         - java
     - role: geerlingguy.docker
     - role: geerlingguy.git
+  tasks:
+    - name: Import SSL certificate from Nexus to Java's cacerts keystore
+      java_cert:
+        cert_url: "{{ nexus_hostname }}"
+        cert_port: 443
+        cert_alias: nexus
+        keystore_path: /etc/pki/java/cacerts
+        keystore_pass: changeit
+        state: present
+    - name: Get the contents of the Nexus server's SSL cert
+      slurp:
+        src: "{{ hostvars[groups['nexus'][0]]['httpd_ssl_cert_file_location'] }}"
+      register: nexus_ssl_cert
+      delegate_to: nexus
+    - name: Ensure directory for Docker registry certificate trust exists
+      file:
+        path: "/etc/docker/certs.d/{{ nexus_hostname }}:{{ item }}"
+        state: directory
+      with_items:
+        - "5000"
+        - "5001"
+    - name: Drop Nexus server's SSL cert into Docker's certificate directory
+      copy:
+        dest: "/etc/docker/certs.d/{{ nexus_hostname }}:{{ item }}/ca.crt"
+        content: "{{ nexus_ssl_cert['content'] | b64decode }}"
+        owner: root
+        group: root
+        mode: 0644
+      with_items:
+        - "5000"
+        - "5001"

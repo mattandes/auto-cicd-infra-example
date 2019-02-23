@@ -13,6 +13,8 @@
 
 - name: geerlingguy.pip
 
+- name: geerlingguy.apache
+
 - name: ansible-thoteam.nexus3-oss
 
 - name: geerlingguy.gitlab

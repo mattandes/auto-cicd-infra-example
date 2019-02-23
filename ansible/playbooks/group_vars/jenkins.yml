@@ -21,7 +21,7 @@ jenkins_plugins:
 jenkins_casc_config_template: "../files/jenkins/jenkins.yaml.j2"
 
 # Jenkins variable used in CasC config template
-jenkins_casc_jenkins_url: "http://localhost:8080/"
+jenkins_casc_jenkins_url: "http://jenkins:8080/"
 jenkins_casc_slave_private_key: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           34373832633133633731323932353864613364356631633131386632393038383437386161346437

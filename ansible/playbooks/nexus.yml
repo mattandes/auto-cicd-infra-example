@@ -2,6 +2,22 @@
 - hosts:
     - nexus
   become: true
+  pre_tasks:
+    - name: Create self-signed certificate.
+      command: >
+        openssl req -new -nodes -x509 -subj "/CN={{ nexus_hostname }}" -days 3650 -keyout {{ httpd_ssl_cert_key_location }} -out {{ httpd_ssl_cert_file_location }} -extensions v3_ca
+      args:
+        creates: "{{ httpd_ssl_cert_file_location }}"
   roles:
     - role: geerlingguy.java
+    - role: geerlingguy.apache
     - role: ansible-thoteam.nexus3-oss
+  tasks:
+    - name: Add additional Apache configuraiton for Docker repos
+      template:
+        dest: /etc/httpd/conf.d/docker-vhosts.conf
+        src: ../files/nexus/docker-vhosts.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart apache

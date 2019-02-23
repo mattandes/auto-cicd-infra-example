@@ -58,23 +58,10 @@ jenkins:
             value: BAR
           - key: GIT_SSL_NO_VERIFY
             value: true
-{% if groups['nexus'] > 0 %}
-{% for host in groups['nexus'] %}
-{% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
           - key: NEXUS_URL
-            value: "http://{{ hostvars[host]['ansible_host'] }}:8081"
-{% else %}
-          - key: NEXUS_URL
-            value: "http://{{ hostvars[host]['ansible_default_ipv4']['address'] }}:8081"
-{% endif %}
-{% endfor %}
-{% endif %}
-{% if groups['gitlab'] > 0 %}
-{% for host in groups['gitlab'] %}
+            value: "https://{{ nexus_hostname }}"
           - key: GITLAB_HOST
-            value: "{{ hostvars[host]['gitlab_external_url'] | urlsplit('hostname') }}"
-{% endfor %}
-{% endif %}
+            value: "{{ hostvars[groups['gitlab'][0]]['gitlab_external_url'] | urlsplit('hostname') }}"
 {% if groups['jenkins-slaves'] > 0 %}
   nodes:
 {% for host in groups['jenkins-slaves'] %}
@@ -106,17 +93,8 @@ jenkins:
             value: "VADER"
           - key: GIT_SSL_NO_VERIFY
             value: true
-{% if groups['nexus'] > 0 %}
-{% for host in groups['nexus'] %}
-{% if hostvars[host]['ansible_bios_version'] == "VirtualBox" %}
           - key: NEXUS_URL
-            value: "http://{{ hostvars[host]['ansible_host'] }}:8081"
-{% else %}
-          - key: NEXUS_URL
-            value: "http://{{ hostvars[host]['ansible_default_ipv4']['address'] }}:8081"
-{% endif %}
-{% endfor %}
-{% endif %}
+            value: "https://{{ nexus_hostname }}"
       remoteFS: "/home/{{ jenkins_casc_ssh_user }}"
 {% endfor %}
 {% endif %}
